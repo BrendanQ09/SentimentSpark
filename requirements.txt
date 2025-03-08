@@ -1,0 +1,13 @@
+kafka-python
+pyspark
+tweepy
+textblob
+yfinance
+streamlit
+praw
+kafka-python
+streamlit
+plotly
+transformers
+torch
+streamlit-autorefresh
