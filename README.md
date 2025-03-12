@@ -1,19 +1,31 @@
-# SentimentSpark
-Description:
-StockPulse is a real-time stock sentiment analysis application powered by Apache Spark and Kafka, with an interactive Streamlit dashboard. This project ingests live financial news and social media data, processes sentiment using NLP, and visualizes stock sentiment trends to help traders and investors make data-driven decisions.
+# 📊 Kafka Stock Sentiment Dashboard
 
-Key Features:
+## 🚀 Overview
+A **real-time dashboard** for stock-related tweets using **Kafka & Streamlit**. Tweets are analyzed for sentiment (`positive`, `neutral`, `negative`) and visualized dynamically.
 
-Real-Time Streaming: Uses Kafka for continuous data ingestion.
-Big Data Processing: Leverages Apache Spark for fast, distributed analysis.
-Sentiment Analysis: Applies NLP to classify stock sentiment as bullish, bearish, or neutral.
-Interactive Dashboard: Built with Streamlit to provide intuitive visualizations.
-Market Insights: Tracks sentiment trends to identify potential trading signals.
-Tech Stack:
+## 🛠 Features
+- **🔄 Live Kafka Streaming** – Reads tweets from `stock_tweets` topic.
+- **📊 Sentiment Analysis** – Bar chart for sentiment distribution.
+- **📈 Sentiment Over Time** – Line chart (forward-filled to prevent gaps).
+- **🔥 Tweet Frequency Heatmap** – Posts by **day & hour**.
+- **📜 Latest Tweets** – Displays the most recent messages.
 
-Apache Kafka – Streaming data ingestion
-Apache Spark – Big data processing
-NLTK/TextBlob/VADER – Sentiment analysis
-Streamlit – Interactive UI
-Pandas & Matplotlib – Data processing & visualization
-This project is ideal for those interested in financial markets, real-time analytics, and big data processing. 🚀📈
+## ⚡ Setup
+1️⃣ Install Dependencies
+pip install -r requirements.txt
+
+2️⃣ Start Kafka & Zookeeper
+C:\kafka\bin\windows\zookeeper-server-start.bat C:\kafka\config\zookeeper.properties
+C:\kafka\bin\windows\kafka-server-start.bat C:\kafka\config\server.properties
+
+3️⃣ Create Kafka Topic
+C:\kafka\bin\windows\kafka-topics.bat --create --topic stock_tweets --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+
+4️⃣ Start Producer & Streamlit
+python producers/tweet_producer.py  # Send test tweets
+streamlit run app.py  # Start dashboard
+
+🎯 Next Steps
+🚨 Add alerts for sentiment spikes.
+📡 Integrate real Twitter API.
+🏆 Improve ML sentiment accuracy.
