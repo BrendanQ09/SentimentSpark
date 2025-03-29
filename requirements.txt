@@ -11,3 +11,4 @@ plotly
 transformers
 torch
 streamlit-autorefresh
+pymongo
