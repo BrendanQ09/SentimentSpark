@@ -57,7 +57,7 @@ Run your data producer to fetch and process data (e.g., tweets or Reddit posts) 
 ```bash
 python producers/tweet_producer.py    # For Twitter data
 ```
-# or
+ or
 ```bash
 python producers/historical_reddit_posts.py   # For Reddit data
 ```
