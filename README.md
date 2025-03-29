@@ -1,4 +1,4 @@
-# 📊 Kafka Stock Sentiment Dashboard
+# 📊 Reddit Stock Sentiment Dashboard using Spark, MongoDB and Streamlit
 
 ## 🚀 Overview
 A **real-time dashboard** for stock-related sentiment analysis powered by **Kafka, MongoDB & Streamlit**. Data (e.g., tweets or Reddit posts) is analyzed for sentiment (`positive`, `neutral`, `negative`) and visualized dynamically. The system automatically collects data daily, stores it in MongoDB, and then displays key insights including trend detection using word clouds.
