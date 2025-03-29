@@ -60,7 +60,7 @@ pause
 ### 5. MongoDB
 Ensure MongoDB is running continuously. The producer script stores data in the stock_sentiment database (e.g., collection reddit_data).
 
-###6. Dashboard
+### 6. Dashboard
 Launch your Streamlit dashboard to visualize the data:
 
 ```bash
