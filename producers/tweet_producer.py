@@ -3,8 +3,10 @@ import praw
 import json
 import os
 from kafka import KafkaProducer
-from textblob import TextBlob
 from dotenv import load_dotenv
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+import torch
+from pymongo import MongoClient
 
 # Load environment variables
 load_dotenv()
@@ -18,6 +20,11 @@ producer = KafkaProducer(
     value_serializer=lambda v: json.dumps(v).encode('utf-8')
 )
 
+# MongoDB Setup
+mongo_client = MongoClient("mongodb://localhost:27017/")
+mongo_db = mongo_client["stock_sentiment"]
+mongo_collection = mongo_db["reddit_data"]
+
 # Reddit API Credentials
 reddit = praw.Reddit(
     client_id=os.getenv("REDDIT_CLIENT_ID"),
@@ -27,20 +34,52 @@ reddit = praw.Reddit(
     password=os.getenv("REDDIT_PASSWORD")
 )
 
-def get_reddit_posts():
-    subreddit = reddit.subreddit("wallstreetbets")  # Target subreddit
-    for post in subreddit.new(limit=50):  # Fetch latest 50 posts
-        sentiment = TextBlob(post.title).sentiment.polarity
-        sentiment_label = "positive" if sentiment > 0 else "negative" if sentiment < 0 else "neutral"
+# Load FinBERT model and tokenizer
+tokenizer = AutoTokenizer.from_pretrained("ProsusAI/finbert")
+model = AutoModelForSequenceClassification.from_pretrained("ProsusAI/finbert")
 
-        data = {
-            "post": post.title,
+def get_finance_sentiment(text):
+    inputs = tokenizer(text, return_tensors="pt", truncation=True)
+    outputs = model(**inputs)
+    scores = torch.nn.functional.softmax(outputs.logits, dim=1)
+    sentiment = scores.argmax().item()
+    sentiment_label = ["negative", "neutral", "positive"][sentiment]
+    return sentiment_label
+
+def save_to_mongo_if_new(data):
+    if not mongo_collection.find_one({"content": data["content"], "timestamp": data["timestamp"]}):
+        mongo_collection.insert_one(data)
+        return True
+    return False
+
+def get_reddit_posts():
+    subreddit = reddit.subreddit("wallstreetbets")
+    for post in subreddit.new(limit=50):
+        sentiment_label = get_finance_sentiment(post.title)
+        post_data = {
+            "type": "post",
+            "content": post.title,
             "sentiment": sentiment_label,
             "timestamp": str(post.created_utc)
         }
-        producer.send(KAFKA_TOPIC, data)
-        print(f"Sent: {data}")
+        if save_to_mongo_if_new(post_data):
+            producer.send(KAFKA_TOPIC, post_data)
+            print(f"Sent post: {post_data}")
+
+        post.comments.replace_more(limit=0)
+        for comment in post.comments.list()[:10]:
+            comment_sentiment = get_finance_sentiment(comment.body)
+            comment_data = {
+                "type": "comment",
+                "content": comment.body,
+                "sentiment": comment_sentiment,
+                "timestamp": str(comment.created_utc),
+                "parent_post": post.id
+            }
+            if save_to_mongo_if_new(comment_data):
+                producer.send(KAFKA_TOPIC, comment_data)
+                print(f"Sent comment: {comment_data}")
 
 while True:
     get_reddit_posts()
-    time.sleep(5)  # Fetch every 5 minutes
+    time.sleep(300)
