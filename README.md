@@ -15,6 +15,22 @@ A **real-time dashboard** for stock-related sentiment analysis powered by **Kafk
   - Visualizes post frequency by day of the week and hour.
 - **📝 Trend Analysis**  
   - Generates a word cloud that highlights key trends (e.g., mentions of "Tesla", "IPO", etc.) using advanced stopword filtering.
+ 
+## Streamlit Screenshots
+
+**Raw Data In-Depth:**  
+![Raw Data In-Depth](screenshots/raw_data_in_depth.PNG)
+
+**Sentiment Distribution (positive, neutral, and negative):**  
+![Sentiment Distribution](screenshots/sentiment_distribution_andrawata.PNG)
+
+**Average Sentiment Over Time (hourly) & Posts Frequency Heatmap (Posts by Day & Hour):**  
+![Average Sentiment & Heatmap](screenshots/sentiment_over_timeand_posts_per_hour.PNG)
+
+**Key Trend Analysis, Mention Count, and Word Cloud Visualization:**  
+![Key Trend Analysis](screenshots/key_trend_analysis.PNG)
+
+
 
 ## ⚡ Setup
 
@@ -75,6 +91,8 @@ streamlit run app.py
 🤖 Enhance sentiment analysis accuracy with improved ML models.
 
 ⏰ Further automate data collection and processing workflows.
+
+Change the project from a local mongodb to a cloud mongodb and depoloy the streamlit to the puclic
 
 📝 Additional Enhancements
 Trend Analysis with Word Cloud:
